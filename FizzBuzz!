@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<title>Demo FizzBuzz Array</title>
+</head>
+
+<body>
+ <script>
+var data = new Array(); // declares the array
+
+function add_element(){
+data.push(document.getElementById('text1').value); // adds the element to the array
+document.getElementById('text1').value=''; // makes the text box blank
+displayArr(); // displays the array's elements
+}
+
+function displayArr(){
+var myString='';
+myString = 'The number of elements in your array is '+ data.length +'.' +  '<br>';
+for (i=0;i<data.length;i++) 
+{ 
+if (data[i] == 0) {
+myString += data[i] + ", undefined result, please try another number :)"+ "<br >"; }
+else if (data[i] % 5 == 0 && data[i] % 3 == 0) {
+myString += data[i] + ", FizzBuzz!"+ "<br >"; } 
+else if (data[i] % 5 == 0) {
+myString += data[i] + ", Buzz!"+ "<br >";}
+else if (data[i] % 3 ==0) {
+myString += data[i] + ", Fizz!"+ "<br >";
+}
+else {
+myString += "Sorry, " + data[i] + " is not what we are looking for, please try another number :)" + "<br>" ; 
+}
+} 
+
+document.getElementById('load').innerHTML=myString; // Displays array's elements
+}
+</script>
+
+<h2>FizzBuzz Game!</h2>
+<input type=text  id='text1'><input type=button value='Click to add an element!' onClick='add_element()';>
+<div id=load></div>
+
+</body>
+</html>

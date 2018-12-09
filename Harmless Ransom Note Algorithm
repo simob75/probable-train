@@ -1,0 +1,22 @@
+function NoteRansom(Text, magazine) {
+  var noteArr = Text.split(' ');
+  var magArr = magazine.split(' ');
+  var magazineObj = {};
+
+  magArr.forEach(word => {
+    if (!magazineObj[word]) magazineObj[word]=0;
+    magazineObj[word]++;
+  });
+
+  var checkNote = true;
+  noteArr.forEach(word => {
+    if (magazineObj[word]) {
+      magazineObj[word]--;
+      if (magazineObj[word] < 0) checkNote = false;
+    } 
+    else {checkNote = false;}
+  });
+  return checkNote;
+}
+ 
+NoteRansom('one part of the task in presenting a semantics for a natural language', 'one part of the task in presenting semantics for a natural language is to show how the meanings of the constituents of a sentence are combined with one another to build up a meaning for the whole sentence'); 

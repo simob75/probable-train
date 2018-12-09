@@ -1,0 +1,13 @@
+function reveArr(arr) {
+    var myArr = [];
+    myArr = arr;
+    var revArr = [];
+    for (i = arr.length -1; i >=0; i--) {
+    var newArrItem =0;
+    newArrItem += myArr[i];
+    revArr.push(newArrItem);
+    }
+    return revArr;
+}
+
+reveArr([1, 2, 3, 4, 5, 6, 7, 8]);

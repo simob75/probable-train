@@ -21,7 +21,7 @@ for (i=0;i<data.length;i++)
 { 
 if (data[i] == 0) {
 myString += data[i] + ", undefined result, please try another number :)"+ "<br >"; }
-else if (data[i] % 5 == 0 && data[i] % 3 == 0) {
+else if (data[i] % 15 == 0) {
 myString += data[i] + ", FizzBuzz!"+ "<br >"; } 
 else if (data[i] % 5 == 0) {
 myString += data[i] + ", Buzz!"+ "<br >";}

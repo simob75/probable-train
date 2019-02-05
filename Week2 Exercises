@@ -1,0 +1,212 @@
+pragma solidity ^0.4.24;
+
+import "./IERC20.sol";
+import "./SafeMath.sol";
+
+/**
+ * @title Standard ERC20 token
+ * @dev Implementation of the basic standard token.
+ */
+contract ERC20 is IERC20 {
+  using SafeMath for uint256;
+  
+
+  mapping (address => uint256) internal _balances;
+  mapping (address => mapping (address => uint256)) internal _allowed;
+  uint256 internal _totalSupply;
+
+  // -----------------------------------------
+  // Public Functions (DO NOT CHANGE!!)
+  // -----------------------------------------
+  
+  /**
+  * 
+  */
+  constructor (uint256 _initialSupply) public {
+        _balances[msg.sender] = _balances[msg.sender].add(_initialSupply);
+        _totalSupply = _totalSupply.add(_initialSupply);
+  }
+
+  /**
+  * @dev Total number of tokens in existence
+  */
+  function totalSupply() public view returns (uint256) {
+    // TODO: Your Code Here
+    return _totalSupply;
+  }
+
+  /**
+  * @dev Gets the balance of the specified address.
+  * @param owner The address to query the balance of.
+  * @return An uint256 representing the amount owned by the passed address.
+  */
+  function balanceOf(address owner) public view returns (uint256) {
+    // TODO: Your Code Here
+    return _balances[owner];
+  }
+
+  /**
+   * @dev Function to check the amount of tokens that an owner allowed to a spender.
+   * @param owner address The address which owns the funds.
+   * @param spender address The address which will spend the funds.
+   * @return A uint256 specifying the amount of tokens still available for the spender.
+   */
+  function allowance(address owner, address spender) public view returns(uint256) {
+    // TODO: Your Code Here
+    return _allowed[owner][spender];
+    
+  }
+
+  /**
+  * @dev Transfer token for a specified address
+  * @param to The address to transfer to.
+  * @param value The amount to be transferred.
+  * @return Should always return true if all conditions are met. Otherwise throw exception.
+  */
+  function transfer(address to, uint256 value) public returns (bool) {
+      // TODO: Your Code Here
+        require(_balances[msg.sender] >= value);
+        _balances[msg.sender] -= _balances[msg.sender].sub(value);
+        _balances[to] += _balances[to].add(value);
+
+        emit Transfer(msg.sender, to, value);
+
+        return true;
+  }
+
+  /**
+   * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+   * Note that the owner (msg.sender) can approve someone to spend tokens that they do not yet have.
+   * @param spender The address which will spend the funds.
+   * @param value The amount of tokens to be spent.
+   * @return Should always return true if success. Otherwise throw exception.
+   */
+  function approve(address spender, uint256 value) public returns (bool) {
+    // TODO: Your Code Here
+        _allowed[msg.sender][spender] = value;
+
+        emit Approval(msg.sender, spender, value);
+
+        return true;
+  }
+
+  /**
+   * @dev Transfer tokens from one address to another
+   * @param from address The address which you want to send tokens from
+   * @param to address The address which you want to transfer to
+   * @param value uint256 the amount of tokens to be transferred
+   */
+  function transferFrom(address from, address to, uint256 value) public returns (bool) {
+    // TODO: Your Code Here
+        require(value <= _balances[from]);
+        require(value <= _allowed[from][msg.sender]);
+
+        _balances[from] -= _balances[from].sub(value);
+        _balances[to] += _balances[to].add(value);
+
+        _allowed[from][msg.sender] -= value;
+
+        emit Transfer(from, to, value);
+
+        return true;
+    
+  }
+
+  // -----------------------------------------
+  // Internal functions (you can write any other internal helper functions here)
+  // -----------------------------------------
+
+}
+
+pragma solidity ^0.4.24;
+
+import "./IERC20.sol";
+import "./SafeMath.sol";
+
+contract Crowdsale {
+    using SafeMath for uint256;
+
+    uint256 private cap; // maximum amount of ether to be raised
+    uint256 private weiRaised; // current amount of wei raised
+    uint256 private numberOfToken;
+    uint256 private rate; // price in wei per smallest unit of token (e.g. 1 wei = 10 smallet unit of a token)
+    address private wallet; // wallet to hold the ethers
+    IERC20 private token; // address of erc20 tokens
+
+   /**
+    * Event for token purchase logging
+    * @param purchaser who paid for the tokens
+    * @param beneficiary who got the tokens
+    * @param value weis paid for purchase
+    * @param amount amount of tokens purchased
+    */
+    event TokensPurchased(
+        address indexed purchaser,
+        address indexed beneficiary,
+        uint256 value,
+        uint256 amount
+    );
+
+    // -----------------------------------------
+    // Public functions (DO NOT change the interface!)
+    // -----------------------------------------
+   /**
+    * @param _rate Number of token units a buyer gets per wei
+    * @dev The rate is the conversion between wei and the smallest and indivisible token unit.
+    * @param _wallet Address where collected funds will be forwarded to
+    * @param _token Address of the token being sold
+    */
+    constructor(uint256 _rate, address _wallet, IERC20 _token, uint _cap) payable public {
+        // TODO: Your Code Here
+        token = _token; //the address of my IERC20 contract
+        wallet = _wallet; //an account from Remix
+        rate = _rate;
+        cap = _cap;
+        weiRaised = 0;
+    }
+
+    /**
+    * @dev Fallback function for users to send ether directly to contract address
+    */
+    function() external payable {
+      buyTokens(msg.sender);
+    }
+
+    function buyTokens(address beneficiary) public payable {
+        // Below are some general steps that should be done.
+        // You need to decide the right order to do them in.
+        //  - Validate any conditions
+        //  - Calculate number of tokens
+        //  - Update any states
+        //  - Transfer tokens and emit event
+        //  - Forward funds to wallet
+        
+
+        // TODO: Your Code Here
+        require(weiRaised / 10 ** 18 < cap);
+        weiRaised += weiRaised.add(msg.value);
+        numberOfToken = msg.value / rate;
+        beneficiary.transfer(numberOfToken);
+        wallet.transfer(msg.value);
+        
+        emit TokensPurchased(msg.sender, beneficiary, numberOfToken, msg.value);
+        
+    }
+
+    /**
+    * @dev Checks whether the cap has been reached.
+    * @return Whether the cap was reached
+    */
+    function capReached() public view returns (bool) {
+        // TODO: Your Code Here
+        require(weiRaised / 10 ** 18 == cap, "Maximum amount of ether not raised yet");
+        return true;
+    }
+
+    // -----------------------------------------
+    // Internal functions (you can write any other internal helper functions here)
+    // -----------------------------------------
+
+
+}
+
